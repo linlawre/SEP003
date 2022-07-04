@@ -1,0 +1,150 @@
+--1.
+
+WITH 
+ddd (n, c) AS (
+SELECT FirstName + ' ' + LastName [q], City
+FROM Employees
+),
+ccc (n, c) AS
+(
+SELECT ContactName [a], City
+FROM Customers
+)
+SELECT DISTINCT d.c
+FROM ddd d JOIN ccc c ON d.c = c.c
+
+
+--2.
+
+SELECT City [c]
+FROM Employees e
+WHERE e.City NOT IN
+	(SELECT c.City
+	FROM Customers c
+	)
+
+
+
+WITH 
+ddd (n, c) AS (
+SELECT FirstName + ' ' + LastName [q], City
+FROM Employees
+),
+ccc (n, c) AS
+(
+SELECT ContactName [a], City
+FROM Customers
+)
+SELECT DISTINCT d.c, d.n, c.n
+FROM ddd d LEFT JOIN ccc c ON d.c = c.c
+WHERE c.n IS NULL OR d.n IS NULL
+
+
+--3.
+
+
+WITH 
+ddd (i, c) AS (
+SELECT ProductID, ProductName
+FROM Products
+
+),
+ccc (i, q) AS
+(
+SELECT ProductID, SUM(Quantity)
+FROM [Order Details]
+GROUP BY ProductID
+)
+SELECT d.c[Name], c.q[Qunt]
+FROM ccc c LEFT JOIN ddd d ON d.i = c.i
+
+
+--4.
+WITH 
+ddd (sc, oi) AS (
+SELECT ShipCity, OrderID
+FROM Orders
+),
+ccc (q, oi, pn) AS
+(
+SELECT Quantity, OrderID, p.ProductName 
+FROM [Order Details] o LEFT JOIN Products p
+ON o.ProductID = p.ProductID
+)
+SELECT sc, q, pn
+FROM ddd d JOIN ccc c
+ON d.oi = c.oi
+ORDER BY sc
+
+--5.
+SELECT ShipCity, COUNT(1)
+FROM Orders
+Group BY ShipCity
+
+--6.
+WITH 
+ddd (oi) AS (
+SELECT OrderID
+FROM [Order Details]
+GROUP BY OrderID
+),
+ccc (oi, sc) AS (
+SELECT OrderID, ShipCity
+FROM Orders 
+)
+SELECT DISTINCT sc
+FROM ccc c Join ddd d
+ON c.oi = d.oi 
+
+--7.
+WITH
+ddd (ci, c, cn) AS (
+SELECT CustomerID, City, ContactName
+FROM Customers
+),
+ccc (ci, sc) AS (
+SELECT CustomerID, ShipCity
+FROM Orders
+)
+SELECT DISTINCT cn
+FROM ddd d Join ccc c
+ON d.c <> c.sc
+
+--8.
+WITH
+ddd (oi, ppi, aavg, ssum) AS (
+SELECT TOP 5 OrderID, ProductID , AVG(UnitPrice) [avg], SUM(Quantity) [q]
+FROM [Order Details]
+GROUP BY OrderID, ProductID
+ORDER BY [q] DESC
+), 
+ccc (oi, sc) AS (
+SELECT OrderID, ShipCity
+FROM Orders
+)
+SELECT ppi, aavg, ssum, sc
+FROM ddd d LEFT JOIN ccc c 
+ON d.oi = c.oi
+
+--9.
+WITH 
+ddd (sc) AS (
+SELECT DISTINCT ShipCity
+FROM Orders
+),
+ccc (c) AS (
+SELECT DISTINCT City
+FROM Employees
+)
+SELECT c
+FROM ddd d FULL JOIN ccc c ON d.sc = c.c
+WHERE sc IS NULL
+
+--10.
+SELECT COUNT(1), ShipCity
+FROM Orders
+GROUP BY ShipCity
+ORDER BY COUNT(1) DESC
+--11.
+
+Add DISTINCT
